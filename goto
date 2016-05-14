@@ -1,0 +1,35 @@
+#!/bin/bash
+
+RD_RESOLUTION=$(xrandr --current | grep "*" | awk '{print $1}')
+RD_OPTIONS="-r disk:RB-INT=/home/rblock -r disk:RB-EXT=/var/run/media/rblock -r sound:local -a 24 -x 0x80 -z -r clipboard:PRIMARYCLIPBOARD -K"
+
+case $# in
+  0)
+    echo "where do you want to go today ?"
+    exit 2
+  ;;
+  1) path="$1"
+     host="$1"
+  ;;
+  2) path="$1/$2"
+     host="$2"
+  ;;
+esac
+
+# get properties
+source ~/.goto/$path
+
+if [[ $hostname == "" ]] ; then
+  hostname=$host
+fi
+
+case $type in
+  ssh)
+    ssh $username@$hostname
+  ;;
+  *)
+   rdesktop $hostname -g $res $options -u $username -p $password &
+  ;;
+esac
+
+exit
