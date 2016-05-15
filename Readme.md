@@ -7,7 +7,17 @@ cd ~/Downloads
 git clone https://github.com/ruedigerblock/goto.git
 cd goto
 sudo ./install
+```
 
 ## Configuration
 
 Todo :-)
+
+## Uninstall
+
+```
+cd ~/Downloads
+git clone https://github.com/ruedigerblock/goto.git
+cd goto
+sudo ./install
+```
