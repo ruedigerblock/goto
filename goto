@@ -17,7 +17,7 @@ case $# in
   ;;
 esac
 
-if test ! -f $host; then
+if test ! -f ~/.goto/$path_to_cfg; then
   read -e -p "$host has no configuration file; create one ? (y/n) " -i "y" answer
   case $answer in
     y|Y|j|J|yy)
@@ -33,26 +33,23 @@ if test ! -f $host; then
     read -e -p "enter selection: " selection
     case $selection in
       [0-9]*)
-        folder=${categories[$selection]}
+        _folder=${categories[$selection]}
+        folder=${_folder##*/}
       ;;
       n)
         folder="no-category"
       ;;
       *)
-        case $selection in
-          "" | " "* )
-            echo "category name can't be empty"
-            exit 2
-          ;;
-          *)
-          ;;
-        esac
         folder=$selection
       ;;
      esac
      mkdir -pv ~/.goto/$folder
     ;;
+  n)
+    folder=.
+  ;;
   esac
+  echo "hostname=$host" >> ~/.goto/$folder/$host
 fi
 
 exit 0
