@@ -17,6 +17,46 @@ case $# in
   ;;
 esac
 
+if test ! -f $host; then
+  read -e -p "$host has no configuration file; create one ? (y/n) " -i "y" answer
+  case $answer in
+    y|Y|j|J|yy)
+    echo "choose a category, press 'n' for none or enter new name"
+    declare -a categories=($(find ~/.goto/* -type d | tr '\n' ' '))
+    echo ${categories[2]}
+    i=0
+    for category in ${categories[@]}; do
+      printf "%i) %s\n" $i ${category##*/}
+      i=$((i+1))
+    done
+    printf "n) %s\n" "no-category"
+    read -e -p "enter selection: " selection
+    case $selection in
+      [0-9]*)
+        folder=${categories[$selection]}
+      ;;
+      n)
+        folder="no-category"
+      ;;
+      *)
+        case $selection in
+          "" | " "* )
+            echo "category name can't be empty"
+            exit 2
+          ;;
+          *)
+          ;;
+        esac
+        folder=$selection
+      ;;
+     esac
+     mkdir -pv ~/.goto/$folder
+    ;;
+  esac
+fi
+
+exit 0
+
 # get properties
 source ~/.goto/$path_to_cfg
 
