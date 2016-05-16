@@ -1,0 +1,25 @@
+_goto_helper()
+{
+  local IFS=$'\n'
+  content=$(ls ~/.goto/$@)
+  COMPREPLY=( $(compgen -W "${content}" -- ${cur}))
+}
+_goto()
+{
+   local cur prev
+   COMPREPLY=()
+   cur="${COMP_WORDS[COMP_CWORD]}"
+   prev="${COMP_WORDS[COMP_CWORD-1]}"
+
+   folder=$(ls ~/.goto)
+
+
+   COMPREPLY=($(compgen -W "${folder}" -- ${cur}))
+
+   if test -d ~/.goto/$prev; then
+     _goto_helper "$prev"
+   fi
+
+   return 0
+}
+complete -F _goto goto
