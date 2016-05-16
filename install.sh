@@ -7,8 +7,21 @@ if [[ $(whoami) != 'root' ]]; then
 fi
 
 script_path=${0%/*}
+result=0
 
-cp -f $script_path/goto /usr/bin/goto
+cp -fv $script_path/sources/goto /usr/bin/goto || result=2
 chmod 755 /usr/bin/goto
 
-cp -f $script_path/goto_bc /etc/bash_completion.d/goto
+cp -fv $script_path/etc/goto /etc/bash_completion.d/goto || result=2
+
+case $result in
+  0)
+    echo "installation successfull"
+    exit 0
+    ;;
+  *)
+    echo "something terrible happend!"
+    echo "aborting installation"
+    exit 2
+    ;;
+esac
