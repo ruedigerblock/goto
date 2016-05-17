@@ -1,7 +1,12 @@
 #!/bin/bash
 
 USER=$(whoami)
-RD_RESOLUTION=$(xrandr --current | grep "*" | awk '{print $1}'| head -1)
+
+_windowId=$(xprop -root -notype _NET_ACTIVE_WINDOW | grep -oE "0x.*," | tr -d ',')
+RD_WIDTH=$(xwininfo -id $_windowId | grep Width | awk '{print $2}')
+RD_HEIGHT=$(xwininfo -id $_windowId | grep Height | awk '{print $2}')
+
+RD_RESOLUTION="${RD_WIDTH}x${RD_HEIGHT}"
 RD_OPTIONS="-r disk:$USER=$HOME -r sound:local -a 24 -x 0x80 -z -r clipboard:PRIMARYCLIPBOARD -K"
 
 case $# in
@@ -10,9 +15,11 @@ case $# in
     exit 2
   ;;
   1) path_to_cfg="$1"
+     folder="."
      host="$1"
   ;;
   2) path_to_cfg="$1/$2"
+     folder="$1"
      host="$2"
   ;;
 esac
@@ -21,35 +28,12 @@ if test ! -f ~/.goto/$path_to_cfg; then
   read -e -p "$host has no configuration file; create one ? (y/n) " -i "y" answer
   case $answer in
     y|Y|j|J|yy)
-    echo "choose a category, press 'n' for none or enter new name"
-    declare -a categories=($(find ~/.goto/* -type d | tr '\n' ' '))
-    echo ${categories[2]}
-    i=0
-    for category in ${categories[@]}; do
-      printf "%i) %s\n" $i ${category##*/}
-      i=$((i+1))
-    done
-    printf "n) %s\n" "no-category"
-    read -e -p "enter selection: " selection
-    case $selection in
-      [0-9]*)
-        _folder=${categories[$selection]}
-        folder=${_folder##*/}
-      ;;
-      n)
-        folder="no-category"
-      ;;
-      *)
-        folder=$selection
-      ;;
-     esac
-     mkdir -pv ~/.goto/$folder
+      if ! test -d $folder; then
+        mkdir -vp ~/.goto/$folder
+      fi
+      echo "hostname=$host" >> ~/.goto/$path_to_cfg
     ;;
-  n)
-    folder=.
-  ;;
   esac
-  echo "hostname=$host" >> ~/.goto/$folder/$host
 fi
 
 # get properties
