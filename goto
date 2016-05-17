@@ -1,8 +1,8 @@
 #!/bin/bash
 
-RD_RESOLUTION=$(xrandr --current | grep "*" | awk '{print $1}')
-RD_RESOLUTION="workarea"
-RD_OPTIONS="-r disk:RB-INT=/home/rblock -r disk:RB-EXT=/var/run/media/rblock -r sound:local -a 24 -x 0x80 -z -r clipboard:PRIMARYCLIPBOARD -K"
+USER=$(whoami)
+RD_RESOLUTION=$(xrandr --current | grep "*" | awk '{print $1}'| head -1)
+RD_OPTIONS="-r disk:$USER=$HOME -r sound:local -a 24 -x 0x80 -z -r clipboard:PRIMARYCLIPBOARD -K"
 
 case $# in
   0)
@@ -51,8 +51,6 @@ if test ! -f ~/.goto/$path_to_cfg; then
   esac
   echo "hostname=$host" >> ~/.goto/$folder/$host
 fi
-
-exit 0
 
 # get properties
 source ~/.goto/$path_to_cfg
