@@ -45,10 +45,14 @@ fi
 
 case $type in
   ssh)
-    ssh $username@$hostname
+    if [[ $password != "" ]] && which sshpass >> /dev/null 2>&1 ; then
+      sshpass -p $password ssh $username@$hostname
+    else
+      ssh $username@$hostname
+    fi
   ;;
   *)
-   rdesktop $hostname -g $RD_RESOLUTION $RD_OPTIONS -u $username -p $password &
+    rdesktop $hostname -g $RD_RESOLUTION $RD_OPTIONS -u $username -p $password &
   ;;
 esac
 
