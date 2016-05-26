@@ -3,9 +3,10 @@
 USER=$(whoami)
 
 _windowId=$(xprop -root -notype _NET_ACTIVE_WINDOW | grep -oE "0x.*," | tr -d ',')
+editing=false
+
 RD_WIDTH=$(xwininfo -id $_windowId | grep Width | awk '{print $2}')
 RD_HEIGHT=$(xwininfo -id $_windowId | grep Height | awk '{print $2}')
-
 RD_RESOLUTION="${RD_WIDTH}x${RD_HEIGHT}"
 RD_OPTIONS="-r disk:$USER=$HOME -r sound:local -a 24 -x 0x80 -z -r clipboard:PRIMARYCLIPBOARD -K"
 
@@ -18,11 +19,17 @@ case $# in
      folder="."
      host="$1"
   ;;
-  2) path_to_cfg="$1/$2"
+  [23]) path_to_cfg="$1/$2"
      folder="$1"
      host="$2"
   ;;
 esac
+
+for i in $*; do
+  if [[ $i == "-e" ]]; then
+    editing=true
+  fi
+done
 
 if test ! -f ~/.goto/$path_to_cfg; then
   read -e -p "$host has no configuration file; create one ? (y/n) " -i "y" answer
@@ -32,8 +39,13 @@ if test ! -f ~/.goto/$path_to_cfg; then
         mkdir -vp ~/.goto/$folder
       fi
       echo "hostname=$host" >> ~/.goto/$path_to_cfg
+      editing=true
     ;;
   esac
+fi
+
+if $editing; then
+  vim ~/.goto/$path_to_cfg
 fi
 
 # get properties
