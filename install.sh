@@ -29,7 +29,7 @@ done
 
 script_path=${0%/*}
 
-cp -f $script_path/goto /usr/bin/goto
+cp -vf $script_path/goto /usr/bin/goto
 chmod 755 /usr/bin/goto
 
-cp -f $script_path/goto_bc /etc/bash_completion.d/goto
+cp -vf $script_path/goto_bc /etc/bash_completion.d/goto

@@ -57,10 +57,11 @@ fi
 
 case $type in
   ssh)
+    if [[ $command != "" ]]; then _command="-t '"$command"'"; fi
     if [[ $password != "" ]] && which sshpass >> /dev/null 2>&1 ; then
-      sshpass -p $password ssh $username@$hostname
+      sshpass -p $password ssh $username@$hostname $_command
     else
-      ssh $username@$hostname
+      ssh $username@$hostname "$_command"
     fi
   ;;
   *)
